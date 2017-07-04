@@ -3,7 +3,7 @@ var TwitterPackage = require('twitter');
 
 
 var mongoose = require('mongoose');
-mongoose.connect('mongodb://localhost/test');
+mongoose.connect('mongodb://user1:123456@ds139942.mlab.com:39942/kopteste');
 
 var secret = {
   consumer_key: 'CcM9BBYrrOuYqmjySrU5UWCpY',
@@ -14,13 +14,16 @@ var secret = {
 
 //criando modelos
 
-var Post = mongoose.model('post', { mensagem: String });
+var Post = mongoose.model('post', {
+ mensagem: String ,
+ horario_post:Date,
+});
 
 var Twitter = new TwitterPackage(secret);
 
 Twitter.stream('statuses/filter', {track: '@jairbolsonaro'}, function(stream) {
   stream.on('data', function(tweet) {
-    console.log(tweet.text);
+    console.log(tweet.text, tweet.created_at);
 
     var postAtual = new Post({mensagem: tweet.text});
 
@@ -30,6 +33,10 @@ Twitter.stream('statuses/filter', {track: '@jairbolsonaro'}, function(stream) {
         } else {
           console.log('salvo com sucesso');
         }
+        if (tweet.text=="mito"){
+          console.log('favoravel')
+        }
+
           
     });
     //salvar n
