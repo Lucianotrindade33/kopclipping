@@ -17,25 +17,46 @@ var secret = {
 var Post = mongoose.model('post', {
  mensagem: String ,
  horario_post:Date,
+ user:String,
+ owner:String
+
 });
+var owner = "user1";
+
+var twitter = new TwitterPackage(secret)
+
+
+
 
 var Twitter = new TwitterPackage(secret);
 
 Twitter.stream('statuses/filter', {track: '@jairbolsonaro'}, function(stream) {
+
   stream.on('data', function(tweet) {
+
+    var postNegfunction = function(){
+       
+        if(tweet.text=="racista" || tweet.text=="ditador" || tweet.text=="homofobico"
+          ){
+          console.log('desfavorável');
+        }else{
+          console.log('favoravel');
+        }
+}
     console.log(tweet.text, tweet.created_at);
 
-    var postAtual = new Post({mensagem: tweet.text});
+    var postAtual = new Post({mensagem: tweet.text,owner: owner});
+
 
     postAtual.save(function(err){
+
+
             if (err) {
           console.log(err);
         } else {
           console.log('salvo com sucesso');
         }
-        if (tweet.text=="mito"){
-          console.log('favoravel')
-        }
+
 
           
     });
